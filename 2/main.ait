@@ -1,0 +1,37 @@
+@load ./string-extensions.js ;
+@load ./input.ait ;
+
+stack2list: stack [ [] unstack ] dip ;
+pw2list: "" strsplit ;
+
+sum: 0 [+] fold ;
+count: [[1] [0] branch] map sum ;
+
+makeBoundsChecker:
+  "-" strsplit exec
+  [<=] cons
+  [[>=] cons] dip
+  [cleave &&]
+  cons cons ;
+
+makeLetterCounter: [= [1] [0] branch] cons ;
+
+makeRules:
+  " " strsplit
+  dup last makeLetterCounter
+  swap first makeBoundsChecker ;
+
+checkRules: rolldown map sum swap exec ;
+
+input
+stack2list
+[
+  ":" strsplit
+  dup last pw2list
+  swap first
+  makeRules
+  checkRules
+]
+map
+count
+.

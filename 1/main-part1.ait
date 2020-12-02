@@ -1,0 +1,12 @@
+@load ./input.ait ;
+
+input
+stack [ [] unstack ] dip
+dup
+[
+  dupd dup
+  [+ 2020 =] cons
+  swapd some
+  [.] [pop] branch
+]
+step
