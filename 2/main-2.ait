@@ -1,0 +1,36 @@
+@load ./string-extensions.js ;
+@load ./input.ait ;
+
+stack2list: stack [ [] unstack ] dip ;
+pw2list: "" strsplit ;
+
+sum: 0 [+] fold ;
+count: [[1] [0] branch] map sum ;
+not: false = [true] [false] branch ;
+xor: dupd dup rolldown && not [||] dip && ;
+
+makeRule:
+  [at] cons
+  swap [=] cons
+  concat ;
+
+makeRules:
+  " " strsplit exec
+  swap "-" strsplit exec
+  [dupd rollup] dip
+  makeRule [makeRule] dip ;
+
+checkRules: cleave xor ;
+
+input
+stack2list
+[
+  ":" strsplit
+  dup last pw2list
+  swap first
+  makeRules
+  checkRules
+]
+map
+count
+.
