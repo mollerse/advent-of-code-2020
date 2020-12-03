@@ -1,0 +1,37 @@
+@load ../2/string-extensions.js ;
+@load ./input.ait ;
+
+# ------ HELPER WORDS ------ #
+
+stack2list: stack [ [] unstack ] dip ;
+terrain2list: "" strsplit ;
+fixInput: stack2list [ terrain2list ] map ;
+
+isTree: "#" = ;
+isSquare: "." = ;
+
+stepX: 3 ;
+
+# array indice -> indice'
+findWrappedIndice: swap size mod ;
+
+# array indice -> value
+atWrap:
+  swap dup rollup
+  findWrappedIndice
+  at ;
+
+makeIndices:
+  size
+  [] swap
+  [_i stepX * swappend]
+  times ;
+
+# ------ PROGRAM ------ #
+
+input
+fixInput
+dup makeIndices
+[atWrap isTree]
+map2
+0 [ [1] [0] branch +] fold .

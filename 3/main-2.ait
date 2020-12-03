@@ -1,0 +1,52 @@
+@load ../2/string-extensions.js ;
+@load ./input.ait ;
+
+# ------ HELPER WORDS ------ #
+
+stack2list: stack [ [] unstack ] dip ;
+terrain2list: "" strsplit ;
+fixInput: stack2list [ terrain2list ] map ;
+
+isTree: "#" = ;
+
+# array indice -> indice'
+findWrappedIndice: swap size mod ;
+
+# array indice -> value
+atWrap:
+  swap dup rollup
+  findWrappedIndice
+  at ;
+
+# step array -> indices
+makeIndices:
+  size
+  [] rolldown
+  [ dup rolldown _i * swappend swap ]
+  times
+  pop ;
+
+countTrees: 0 [ isTree [1] [0] branch +] fold ;
+
+# ------ PROGRAM ------ #
+
+input
+fixInput
+
+[1 3 5 7]
+[
+  swap dup dup rollupd
+  makeIndices
+  [atWrap]
+  map2
+  countTrees .
+]
+step
+
+[_i 2 mod 1 !=] filter
+1
+dupd swap
+makeIndices
+[atWrap]
+map2
+countTrees .
