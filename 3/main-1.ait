@@ -27,11 +27,13 @@ makeIndices:
   [_i stepX * swappend]
   times ;
 
+countTrees: 0 [ isTree [1] [0] branch +] fold ;
+
 # ------ PROGRAM ------ #
 
 input
 fixInput
 dup makeIndices
-[atWrap isTree]
+[atWrap]
 map2
-0 [ [1] [0] branch +] fold .
+countTrees .
