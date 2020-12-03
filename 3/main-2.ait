@@ -44,8 +44,7 @@ fixInput
 step
 
 [_i 2 mod 1 !=] filter
-1
-dupd swap
+dup 1 swap
 makeIndices
 [atWrap]
 map2
