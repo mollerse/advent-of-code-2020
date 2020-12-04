@@ -1,0 +1,21 @@
+@load ../2/string-extensions.js ;
+@load ./input.ait ;
+
+
+# ------ HELPER WORDS ------ #
+
+stack2list: stack [ [] unstack ] dip ;
+fixInput: stack2list [ " " strsplit ] map ;
+
+data2fields: [":" strsplit first] map ;
+has: [=] cons some ;
+requiredFields: [ "byr" "iyr" "eyr" "hgt" "hcl" "ecl" "pid" ] ;
+validateFields: requiredFields [ swapd has ] map true [ && ] fold ;
+
+
+# ------ PROGRAM ------ #
+
+input
+fixInput
+[ data2fields validateFields ]
+map 0 [ [1] [0] branch + ] fold .
