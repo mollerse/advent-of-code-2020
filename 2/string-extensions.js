@@ -13,7 +13,17 @@ function strjoin(joiner, aggr) {
   return wrap(unwrap(aggr).body.map(unwrap).reverse().join(unwrap(joiner)));
 }
 
+function str2int(str) {
+  return wrap(parseInt(unwrap(str), 10))
+}
+
+function trim(str) {
+  return wrap(unwrap(str).trim())
+}
+
 module.exports = {
   strsplit: aitFFI__F(2, 'strsplit', strsplit),
-  strjoin: aitFFI__F(2, 'strjoin', strjoin)
+  strjoin: aitFFI__F(2, 'strjoin', strjoin),
+  str2int: aitFFI__F(1, 'str2int', str2int),
+  trim: aitFFI__F(1, 'trim', trim)
 }

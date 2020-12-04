@@ -10,12 +10,17 @@ fixInput: stack2list [ " " strsplit ] map ;
 data2fields: [":" strsplit first] map ;
 has: [=] cons some ;
 requiredFields: [ "byr" "iyr" "eyr" "hgt" "hcl" "ecl" "pid" ] ;
-validateFields: requiredFields [ swapd has ] map true [ && ] fold ;
+
+countTrue: 0 [ [1] [0] branch + ] fold ;
+validateFields:
+  requiredFields
+  [ swapd has ]
+  all ;
 
 
 # ------ PROGRAM ------ #
 
 input
 fixInput
-[ data2fields validateFields ]
-map 0 [ [1] [0] branch + ] fold .
+[ data2fields validateFields ] map
+countTrue .

@@ -1,0 +1,124 @@
+@load ../2/string-extensions.js ;
+@load ./input.ait ;
+
+# ------ HELPER WORDS ------ #
+
+stack2list: stack [ [] unstack ] dip ;
+fixInput: stack2list [ " " strsplit ] map ;
+
+# n l u -> bool
+between:
+  rollup dup rotate
+  <= [ <= ] dip && ;
+
+data2fields: [":" strsplit first] map ;
+
+checkAllRequiredFieldsPresent:
+  requiredFields
+  [ swapd exec ]
+  all ;
+
+removeMissingRequired:
+  dup [ data2fields checkAllRequiredFieldsPresent ] map
+  [ [dup] [0] branch ] map2
+  [zero [false] [true] branch] filter ;
+
+checkAllFieldsValid:
+  validFields
+  [ swapd exec ]
+  all ;
+
+removeInvalid:
+  dup [ checkAllFieldsValid ] map
+  [ [dup] [0] branch ] map2
+  [zero [false] [true] branch] filter ;
+
+# ------ DOMAIN WORDS ------ #
+
+birthYear: "byr" ;
+issueYear: "iyr" ;
+expirationYear: "eyr" ;
+height: "hgt" ;
+hairColor: "hcl" ;
+eyeColor: "ecl" ;
+passportId: "pid" ;
+
+#data key -> key:value
+find: [ ":" strsplit first ] [=] enconcat filter first ":" strsplit last trim ;
+
+has: [=] cons some ;
+requiredFields: [
+  [ birthYear has ]
+  [ issueYear has ]
+  [ expirationYear has ]
+  [ height has ]
+  [ hairColor has ]
+  [ eyeColor has ]
+  [ passportId has ]
+] ;
+
+isValidBirthYear: str2int 1920 2002 between ;
+isValidIssueYear: str2int 2010 2020 between ;
+isValidExpirationYear: str2int 2020 2030 between ;
+
+heightUnit: "" strsplit dup size 2 - drop "" strjoin ;
+heightValue: "" strsplit dup size 2 - take "" strjoin ;
+isValidCm: heightValue str2int 150 193 between ;
+isValidIn: heightValue str2int 59 76 between ;
+isValidHeight:
+  dup heightUnit
+  "cm" =
+  [isValidCm]
+  [
+    dup heightUnit "in" =
+    [isValidIn]
+    [false]
+    branch
+  ]
+  branch ;
+
+isFirstCharValid: first "#" = ;
+isValidHexNumber:
+  [=] cons
+  ["0" "1" "2" "3" "4" "5" "6" "7" "8" "9" "a" "b" "c" "d" "e" "f"]
+  some ;
+isValidHairColor:
+  "" strsplit
+  dup isFirstCharValid swap
+  rest
+  dup size 6 =
+  [ [isValidHexNumber] all ]
+  [false]
+  branch
+  && ;
+
+
+isValidEyeColor:
+  [=] cons
+  ["amb" "blu" "brn" "gry" "grn" "hzl" "oth"]
+  swap some ;
+
+isValidPassportId:
+  "" strsplit
+  dup size 9 = swap
+  [ str2int 0 9 between ]
+  all
+  && ;
+
+validFields: [
+  [ birthYear find isValidBirthYear ]
+  [ issueYear find isValidIssueYear ]
+  [ expirationYear find isValidExpirationYear ]
+  [ height find isValidHeight ]
+  [ hairColor find isValidHairColor ]
+  [ eyeColor find isValidEyeColor ]
+  [ passportId find isValidPassportId ]
+] ;
+
+# ------ PROGRAM ------ #
+
+input
+fixInput
+removeMissingRequired
+removeInvalid
+size .
